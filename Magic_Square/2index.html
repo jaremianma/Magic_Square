@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="hr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Magični Kvadrat 4x4</title>
+    <style>
+      :root {
+        --primary-color: #2c3e50;
+        --secondary-color: #3498db;
+        --correct-color: #27ae60;
+        --incorrect-color: #e74c3c;
+        --background-color: #ecf0f1;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        margin: 0;
+        padding: 20px;
+        background-color: var(--background-color);
+        color: var(--primary-color);
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      h1 {
+        text-align: center;
+        color: var(--primary-color);
+        margin-bottom: 40px;
+      }
+
+      .grid-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 30px;
+        margin-bottom: 30px;
+      }
+
+      /* Stil za magični kvadrat */
+      .magic-grid {
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+      }
+
+      .magic-grid table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 0 auto;
+      }
+
+      .magic-grid td {
+        border: 2px solid var(--primary-color);
+        padding: 15px;
+        text-align: center;
+        position: relative;
+      }
+
+      .magic-grid select {
+        width: 100%;
+        padding: 10px;
+        border: none;
+        background: transparent;
+        font-size: 16px;
+        font-weight: bold;
+        color: var(--primary-color);
+        appearance: none;
+        text-align-last: center;
+      }
+
+      .magic-grid select:focus {
+        outline: none;
+        background-color: rgba(52, 152, 219, 0.1);
+      }
+
+      /* Stil za sume */
+      .sums-container {
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+      }
+
+      .sum-group {
+        margin-bottom: 25px;
+      }
+
+      .sum-group h3 {
+        color: var(--secondary-color);
+        margin-top: 0;
+        margin-bottom: 15px;
+      }
+
+      .sum-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px;
+        margin-bottom: 8px;
+        border-radius: 5px;
+        background-color: rgba(236, 240, 241, 0.5);
+      }
+
+      .sum-value {
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .correct {
+        color: var(--correct-color);
+      }
+
+      .incorrect {
+        color: var(--incorrect-color);
+      }
+
+      .status-icon {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+      }
+
+      .correct .status-icon {
+        background-color: var(--correct-color);
+      }
+
+      .incorrect .status-icon {
+        background-color: var(--incorrect-color);
+      }
+
+      .duplicate {
+        background-color: yellow !important;
+        border: 2px solid yellow !important;
+        animation: pulse 1s infinite;
+      }
+
+      @keyframes pulse {
+        0% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.02);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+
+      /* Responsive dizajn */
+      @media (max-width: 768px) {
+        .grid-container {
+          grid-template-columns: 1fr;
+        }
+
+        .magic-grid td {
+          padding: 10px;
+        }
+
+        .sum-item {
+          font-size: 14px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        body {
+          padding: 10px;
+        }
+
+        .magic-grid {
+          padding: 10px;
+        }
+
+        .magic-grid select {
+          font-size: 14px;
+          padding: 8px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Magični Kvadrat 4x4</h1>
+
+      <div class="grid-container">
+        <div class="magic-grid">
+          <table id="grid"></table>
+        </div>
+
+        <div class="sums-container">
+          <div class="sum-group">
+            <h3>Redovi</h3>
+            <div id="rowSums"></div>
+          </div>
+
+          <div class="sum-group">
+            <h3>Stupci</h3>
+            <div id="colSums"></div>
+          </div>
+
+          <div class="sum-group">
+            <h3>Dijagonale</h3>
+            <div id="diagSums"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const numbers = [
+        11, 16, 18, 19, 61, 66, 68, 69, 81, 86, 88, 89, 91, 96, 98, 99,
+      ];
+      const targetSum = 264;
+      const initialValues = [
+        [88, 16, 91, 69],
+        [61, 89, 66, 18],
+        [96, 86, 81, 99],
+        [19, 68, 98, 11],
+      ];
+
+      // Inicijalizacija grida
+      const grid = document.getElementById("grid");
+      for (let i = 0; i < 4; i++) {
+        const row = grid.insertRow();
+        for (let j = 0; j < 4; j++) {
+          const cell = row.insertCell();
+          const select = document.createElement("select");
+          select.innerHTML =
+            '<option value="">--</option>' +
+            numbers.map((n) => `<option value="${n}">${n}</option>`).join("");
+          select.value = initialValues[i][j];
+          select.addEventListener("change", updateCalculations);
+          cell.appendChild(select);
+        }
+      }
+
+      function updateCalculations() {
+        const selects = document.querySelectorAll("select");
+        const values = Array.from(selects).map((s) => parseInt(s.value) || 0);
+
+        const counts = {};
+        selects.forEach((select) => {
+          const val = select.value;
+          if (val) counts[val] = (counts[val] || 0) + 1;
+        });
+
+        selects.forEach((select) => {
+          const parentCell = select.closest("td");
+          const hasDuplicate = select.value && counts[select.value] > 1;
+          parentCell.classList.toggle("duplicate", hasDuplicate);
+        });
+
+        // Računanje suma
+        const sums = {
+          rows: [],
+          cols: [0, 0, 0, 0],
+          diags: [0, 0],
+        };
+
+        for (let i = 0; i < 4; i++) {
+          let rowSum = 0;
+          for (let j = 0; j < 4; j++) {
+            const val = values[i * 4 + j];
+            rowSum += val;
+            sums.cols[j] += val;
+          }
+          sums.rows.push(rowSum);
+        }
+
+        sums.diags[0] = values[0] + values[5] + values[10] + values[15];
+        sums.diags[1] = values[3] + values[6] + values[9] + values[12];
+
+        // Prikaz suma
+        displaySums("rowSums", sums.rows);
+        displaySums("colSums", sums.cols);
+        displaySums("diagSums", sums.diags);
+      }
+
+      function displaySums(containerId, sums) {
+        const container = document.getElementById(containerId);
+        container.innerHTML = sums
+          .map(
+            (sum, index) => `
+                <div class="sum-item">
+                    <span>${
+                      containerId === "diagSums"
+                        ? index === 0
+                          ? "Glavna"
+                          : "Sporedna"
+                        : index + 1
+                    }</span>
+                    <div class="sum-value ${
+                      sum === targetSum ? "correct" : "incorrect"
+                    }">
+                        <div class="status-icon"></div>
+                        ${sum}
+                    </div>
+                </div>
+            `
+          )
+          .join("");
+      }
+
+      // Inicijalni izračun
+      updateCalculations();
+    </script>
+  </body>
+</html>

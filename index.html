@@ -39,7 +39,6 @@
         margin-bottom: 30px;
       }
 
-      /* Stil za magični kvadrat */
       .magic-grid {
         background: white;
         border-radius: 10px;
@@ -55,29 +54,30 @@
 
       .magic-grid td {
         border: 2px solid var(--primary-color);
-        padding: 15px;
+        padding: 5px;
         text-align: center;
         position: relative;
+        min-width: 60px;
+        min-height: 60px;
       }
 
-      .magic-grid select {
-        width: 100%;
-        padding: 10px;
-        border: none;
-        background: transparent;
-        font-size: 16px;
+      .number {
+        padding: 15px;
+        margin: 5px;
+        background-color: var(--secondary-color);
+        color: white;
+        border-radius: 5px;
+        cursor: move;
+        user-select: none;
+        text-align: center;
         font-weight: bold;
-        color: var(--primary-color);
-        appearance: none;
-        text-align-last: center;
+        transition: background-color 0.2s;
       }
 
-      .magic-grid select:focus {
-        outline: none;
-        background-color: rgba(52, 152, 219, 0.1);
+      .number:active {
+        opacity: 0.7;
       }
 
-      /* Stil za sume */
       .sums-container {
         background: white;
         border-radius: 10px;
@@ -134,32 +134,13 @@
         background-color: var(--incorrect-color);
       }
 
-      .duplicate {
-        background-color: yellow !important;
-        border: 2px solid yellow !important;
-        animation: pulse 1s infinite;
-      }
-
-      @keyframes pulse {
-        0% {
-          transform: scale(1);
-        }
-        50% {
-          transform: scale(1.02);
-        }
-        100% {
-          transform: scale(1);
-        }
-      }
-
-      /* Responsive dizajn */
       @media (max-width: 768px) {
         .grid-container {
           grid-template-columns: 1fr;
         }
 
         .magic-grid td {
-          padding: 10px;
+          padding: 5px;
         }
 
         .sum-item {
@@ -176,9 +157,9 @@
           padding: 10px;
         }
 
-        .magic-grid select {
+        .number {
+          padding: 10px;
           font-size: 14px;
-          padding: 8px;
         }
       }
     </style>
@@ -212,16 +193,14 @@
     </div>
 
     <script>
-      const numbers = [
-        11, 16, 18, 19, 61, 66, 68, 69, 81, 86, 88, 89, 91, 96, 98, 99,
-      ];
-      const targetSum = 264;
       const initialValues = [
         [88, 16, 91, 69],
         [61, 89, 66, 18],
         [96, 86, 81, 99],
         [19, 68, 98, 11],
       ];
+      const targetSum = 264;
+      let draggedElement = null;
 
       // Inicijalizacija grida
       const grid = document.getElementById("grid");
@@ -229,33 +208,52 @@
         const row = grid.insertRow();
         for (let j = 0; j < 4; j++) {
           const cell = row.insertCell();
-          const select = document.createElement("select");
-          select.innerHTML =
-            '<option value="">--</option>' +
-            numbers.map((n) => `<option value="${n}">${n}</option>`).join("");
-          select.value = initialValues[i][j];
-          select.addEventListener("change", updateCalculations);
-          cell.appendChild(select);
+          const numberDiv = document.createElement("div");
+          numberDiv.className = "number";
+          numberDiv.draggable = true;
+          numberDiv.textContent = initialValues[i][j];
+
+          numberDiv.addEventListener("dragstart", handleDragStart);
+          cell.addEventListener("dragover", handleDragOver);
+          cell.addEventListener("drop", handleDrop);
+
+          cell.appendChild(numberDiv);
         }
       }
 
+      function handleDragStart(e) {
+        draggedElement = e.target;
+        e.dataTransfer.effectAllowed = "move";
+      }
+
+      function handleDragOver(e) {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = "move";
+      }
+
+      function handleDrop(e) {
+        e.preventDefault();
+        const targetCell = e.target.closest("td");
+        if (!targetCell || !draggedElement) return;
+
+        const targetElement = targetCell.querySelector(".number");
+        if (!targetElement || targetElement === draggedElement) return;
+
+        // Zamjeni brojeve
+        const temp = targetElement.textContent;
+        targetElement.textContent = draggedElement.textContent;
+        draggedElement.textContent = temp;
+
+        updateCalculations();
+        draggedElement = null;
+      }
+
       function updateCalculations() {
-        const selects = document.querySelectorAll("select");
-        const values = Array.from(selects).map((s) => parseInt(s.value) || 0);
+        const numberElements = document.querySelectorAll("#grid .number");
+        const values = Array.from(numberElements).map(
+          (el) => parseInt(el.textContent) || 0
+        );
 
-        const counts = {};
-        selects.forEach((select) => {
-          const val = select.value;
-          if (val) counts[val] = (counts[val] || 0) + 1;
-        });
-
-        selects.forEach((select) => {
-          const parentCell = select.closest("td");
-          const hasDuplicate = select.value && counts[select.value] > 1;
-          parentCell.classList.toggle("duplicate", hasDuplicate);
-        });
-
-        // Računanje suma
         const sums = {
           rows: [],
           cols: [0, 0, 0, 0],
@@ -275,7 +273,6 @@
         sums.diags[0] = values[0] + values[5] + values[10] + values[15];
         sums.diags[1] = values[3] + values[6] + values[9] + values[12];
 
-        // Prikaz suma
         displaySums("rowSums", sums.rows);
         displaySums("colSums", sums.cols);
         displaySums("diagSums", sums.diags);
@@ -286,27 +283,26 @@
         container.innerHTML = sums
           .map(
             (sum, index) => `
-                <div class="sum-item">
-                    <span>${
-                      containerId === "diagSums"
-                        ? index === 0
-                          ? "Glavna"
-                          : "Sporedna"
-                        : index + 1
-                    }</span>
-                    <div class="sum-value ${
-                      sum === targetSum ? "correct" : "incorrect"
-                    }">
-                        <div class="status-icon"></div>
-                        ${sum}
-                    </div>
-                </div>
-            `
+              <div class="sum-item">
+                  <span>${
+                    containerId === "diagSums"
+                      ? index === 0
+                        ? "Glavna"
+                        : "Sporedna"
+                      : index + 1
+                  }</span>
+                  <div class="sum-value ${
+                    sum === targetSum ? "correct" : "incorrect"
+                  }">
+                      <div class="status-icon"></div>
+                      ${sum}
+                  </div>
+              </div>
+          `
           )
           .join("");
       }
 
-      // Inicijalni izračun
       updateCalculations();
     </script>
   </body>

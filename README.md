@@ -458,5 +458,131 @@ document.addEventListener("DOMContentLoaded", () => {
     form.reset();
   });
 });
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Teorija:
+
+<!--
+1. Potrebno je HTML dokumentu dodijeliti naslov "My Portfolio". Što je potrebno napisati unutar <head> oznake HTML dokumenta kako bi se to postiglo?
+Odgovor: <title>My Portfolio</title>
+
+2. Koji element koristimo za označavanje sadržaja koji predstavlja glavnu navigaciju?
+Odgovor: <nav>
+
+3. Koristeći HTML, označite sadržaj kao audio zapis sa kontrolama za upravljanje reprodukcijom sadržaja.
+Odgovor:
+<audio controls>
+  <source src="audio.mp3" type="audio/mpeg">
+  Vaš preglednik ne podržava audio zapis.
+</audio>
+
+4. Što je HTML?
+Odgovor: Jezik za označavanje sadržaja web stranica (HyperText Markup Language).
+
+5. Praktični zadatak HTML
+Odgovor: Izrada obrasca s poljima za naziv i ocjenu te dvije pohranjene stavke.
+
+6. Koji od navedenih elemenata je najprikladnije koristiti za označavanje sadržaja koji nije direktno povezan sa sadržajem koji ga okružuje?
+Odgovor: <aside>
+
+7. Koji od navedenih elemenata je najprikladnije koristiti za označavanje uvodnog sadržaja?
+Odgovor: <header>
+
+8. HTML dokument ne smije sadržavati više od jednog <article> elementa.
+Odgovor: Netočno. Može ih biti više.
+
+9. Kako HTML omogućuje izradu pristupačnih web stranica?
+Odgovor: Korištenjem semantičkih elemenata i atributa poput aria-label, alt, itd.
+
+10. Koji HTML atribut koristimo za primjenu linijskih stilskih pravila?
+Odgovor: style
+
+11. Koji selektor će selektirati sve <a> elemente koji se nalaze pod pokazivačem miša?
+Odgovor: a:hover
+
+12. Što je potrebno napisati da bi se iskoristila CSS3 varijabla "color-primary" kao vrijednost za promjenu boje teksta?
+Odgovor: color: var(--color-primary);
+
+13. HTML sadrži prazan <div> element. Koristeći CSS, selektirajte element i uredite ga tako da odgovara obliku na slici.
+Odgovor:
+div {
+  background-color: rgb(40, 158, 40);
+  width: 100px;
+  height: 100px;
+  translate: 50px 50px;
+  transform: rotate(-90deg);
+  border: 0px solid;
+  border-radius: 75% 0% 75% 0%;
+}
+
+14. Praktični zadatak CSS
+Odgovor: Oblikovanje korisničkog sučelja prema skici, s vanjskim .css dokumentom i media queryjima.
+
+15. Potrebno je pozvati SCSS funkciju "lighten". Koja od navedenih linija koda je ispravna?
+Odgovor: lighten($color, 20%)
+
+16. Potrebno je iskoristiti SCSS mixin "square". Koja od navedenih linija koda je ispravna?
+Odgovor: @include square;
+
+17. Što je to minifikacija (minimizacija)? Zašto koristiti minifikaciju?
+Odgovor: Uklanjanje nepotrebnih znakova iz koda radi bolje optimizacije i bržeg učitavanja.
+
+18. Što se od navedenog ne koristi za petlju?
+Odgovor: switch
+
+19. Što od navedenog nije ispravan identifikator varijable?
+Odgovor: 1broj (ne smije započeti brojkom)
+
+20. Potrebno je definirati funkciju "max" koja će vratiti veći od dva broja.
+Odgovor:
+function max(a, b) {
+  return a >= b ? a : b;
+}
+
+21. Koja je razlika između deklariranja varijable pomoću ključne riječi "let" i "const"?
+Odgovor: let dopušta promjenu vrijednosti; const ne dopušta ponovno dodjeljivanje.
+
+22. Praktični zadatak JS
+Odgovor: Validacija obrasca, dodavanje stavke, brisanje, označavanje favorita (JS funkcionalnosti).
+
+23. JavaScript je objektno-orijentirani programski jezik. Y/N
+Odgovor: Da
+
+24. JavaScript je funkcijski programski jezik. Y/N
+Odgovor: Da
+
+25. Što je ECMAScript?
+Odgovor: Standard koji definira JavaScript jezik.
+
+26. Što HTML DOM ne definira?
+Odgovor: Ne definira izgled/stil (to radi CSS).
+
+27. Koja od navedenih metoda koje postoje nad "document" objektom nije ispravna?
+Odgovor: getElementsTagName() – ispravno je getElementsByTagName()
+
+28. Napiši kod koji unutar elementa s ID-jem "copyright-year" ispisuje trenutnu godinu.
+Odgovor:
+document.getElementById("copyright-year").textContent = new Date().getFullYear();
+
+29. Što je GIT?
+Odgovor: Sustav za verzioniranje koda.
+
+30. Kako se inicijalizira Git repozitorij?
+Odgovor: git init
+
+31. Što je to repozitorij?
+Odgovor: Mjesto gdje se pohranjuje kod i prati njegova povijest.
+
+32. Kako se instalira paket s nazivom algebra-library tako da se zapiše u package.json datoteku?
+Odgovor: npm install algebra-library --save
+
+34. Child komponenta može i smije mijenjati props objekt koji je primila od parent komponente. Y/N
+Odgovor: Ne
+
+35. Što od navedenog nije jedna od faza životnog ciklusa React komponente?
+Odgovor: (npr. initRender – ne postoji kao službena faza)
+
+36. Potrebno je u komponentu <User> postaviti prop "firstName". Odaberite ispravnu liniju koda.
+Odgovor: <User firstName="Ivana" />
+-->
 
 
